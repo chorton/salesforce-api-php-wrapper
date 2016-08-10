@@ -44,7 +44,7 @@ class Field
      * @param int    $length
      * @param string $type
      */
-    public function __construct(string $name, string $label, int $length, string $type)
+    public function __construct($name, $label, $length, $type)
     {
         $this->name   = $name;
         $this->label  = $label;
