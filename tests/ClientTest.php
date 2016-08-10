@@ -83,6 +83,40 @@ class ClientTest extends TestCase {
     }
 
     /** @test */
+    public function client_will_describe_object()
+    {
+
+        $object = 'Test';
+        $response = m::mock('Psr\Http\Message\ResponseInterface');
+        $described = [
+            'name'   => 'Test',
+            'fields' => [
+                [
+                    'length' => 18,
+                    'name'   => 'Id',
+                    'type'   => 'id',
+                    'label'  => 'AccountId'
+                ]
+            ]
+        ];
+        $response->shouldReceive('getBody')->once()->andReturn(json_encode($described));
+
+
+        $guzzle = m::mock('\GuzzleHttp\Client');
+        //Make sure the url contains the passed in data
+        $guzzle->shouldReceive('get')->with(stringContainsInOrder('sobjects', $object, 'describe') , \Mockery::type('array'))->once()->andReturn($response);
+
+
+        $sfClient = new \Crunch\Salesforce\Client($this->getClientConfigMock(), $guzzle);
+        $sfClient->setAccessToken($this->getAccessTokenMock());
+
+
+        $data = $sfClient->describe($object);
+
+        $this->assertEquals($described, $data);
+    }
+
+    /** @test */
     public function client_will_get_record_complete()
     {
         $recordId = 'abc' . rand(1000, 9999999);

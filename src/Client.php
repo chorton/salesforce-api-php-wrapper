@@ -141,6 +141,26 @@ class Client
         return $results;
     }
 
+    /**
+     * Get the descriptions of the object
+     *
+     * Its fields, type of each field, etc ...
+     * @see https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/dome_sobject_describe.htm
+     * @param $object
+     *
+     * @return array
+     */
+    public function describe($object)
+    {
+        $url = $this->generateUrl('sobjects/' . $object . '/describe');
+        $response = $this->makeRequest('get', $url, [
+            'headers' => ['Accept'        => 'application/json',
+                          'Authorization' => $this->getAuthHeader(),
+            ],
+        ]);
+        return json_decode($response->getBody(), true);
+    }
+
 
     /**
      * Make an update request
