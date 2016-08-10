@@ -172,7 +172,7 @@ class Client
         $data = $this->describe($object);
 
         return array_map(function ($ar) {
-            return new Field($ar['name'], $ar['label'], $ar['length'], $ar['type']));
+            return new Field($ar['name'], $ar['label'], $ar['length'], $ar['type']);
         }, $data['fields']);
     }
 
