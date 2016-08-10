@@ -161,6 +161,22 @@ class Client
         return json_decode($response->getBody(), true);
     }
 
+    /**
+     * Return the different fields of the object
+     *
+     * @param $object
+     *
+     * @return Field[]
+     */
+    public function getFields($object)
+    {
+        $data = $this->describe($object);
+
+        return array_map(function ($ar) {
+            return new Field($ar['name'], $ar['label'], $ar['length'], $ar['type']));
+        }, $data['fields']);
+    }
+
 
     /**
      * Make an update request
