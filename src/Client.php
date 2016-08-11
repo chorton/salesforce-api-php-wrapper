@@ -1,6 +1,8 @@
 <?php namespace Crunch\Salesforce;
 
 use Crunch\Salesforce\Exceptions\RequestException;
+use Crunch\Salesforce\Object\Field;
+use Crunch\Salesforce\Object\SObject;
 use GuzzleHttp\Exception\RequestException as GuzzleRequestException;
 use Crunch\Salesforce\Exceptions\AuthenticationException;
 use GuzzleHttp\Psr7\Response;
@@ -174,6 +176,28 @@ class Client
         return array_map(function ($ar) {
             return new Field($ar['name'], $ar['label'], $ar['length'], $ar['type']);
         }, $data['fields']);
+    }
+
+    /**
+     * Return the list of all the available SObjects
+     *
+     * @return SObject[]
+     */
+    public function getSObjectList()
+    {
+        $url      = $this->generateUrl('sobjects');
+        $response = $this->makeRequest('get', $url, [
+            'headers' => [
+                'Accept'        => 'application/json',
+                'Authorization' => $this->getAuthHeader(),
+            ],
+        ]);
+
+        $decoded = json_decode($response->getBody(), true);
+
+        return array_map(function ($ar) {
+            return new SObject($ar['name'], $ar['custom'], $ar['label']);
+        }, $decoded['sobjects']);
     }
 
 

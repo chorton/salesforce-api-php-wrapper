@@ -1,6 +1,7 @@
 <?php
 
-use Crunch\Salesforce\Field;
+use Crunch\Salesforce\Object\Field;
+use Crunch\Salesforce\Object\SObject;
 use \Mockery as m;
 
 class ClientTest extends TestCase {
@@ -115,6 +116,42 @@ class ClientTest extends TestCase {
         $data = $sfClient->describe($object);
 
         $this->assertEquals($described, $data);
+    }
+
+
+    /** @test */
+    public function client_will_get_list_sobjects()
+    {
+
+        $response = m::mock('Psr\Http\Message\ResponseInterface');
+        $described = [
+            'encoding'   => 'UTF-8',
+            'sobjects' => [
+                [
+                    'activateable' => true,
+                    'labelPlural'   => 'Accounts',
+                    'label'   => 'Account',
+                    'queryable'  => 'true',
+                    'name' => 'Account',
+                    'custom' => false
+                ]
+            ]
+        ];
+        $response->shouldReceive('getBody')->once()->andReturn(json_encode($described));
+
+
+        $guzzle = m::mock('\GuzzleHttp\Client');
+        //Make sure the url contains the passed in data
+        $guzzle->shouldReceive('get')->with(stringContainsInOrder('sobjects') , \Mockery::type('array'))->once()->andReturn($response);
+
+
+        $sfClient = new \Crunch\Salesforce\Client($this->getClientConfigMock(), $guzzle);
+        $sfClient->setAccessToken($this->getAccessTokenMock());
+
+
+        $data = $sfClient->getSObjectList();
+
+        $this->assertEquals(new SObject('Account', false, 'Account'), $data[0]);
     }
 
     /** @test */

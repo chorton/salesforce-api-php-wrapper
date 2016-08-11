@@ -6,7 +6,7 @@
  * Time: 11:26 AM
  */
 
-namespace Crunch\Salesforce;
+namespace Crunch\Salesforce\Object;
 
 
 /**
