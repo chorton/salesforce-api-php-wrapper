@@ -116,10 +116,12 @@ class Client
      *
      * @param string|null $query
      * @param string|null $next_url
+     * @param boolean|false $queryAll
+     * @param boolean|true $loadAll
      * @return array
      * @throws \Exception
      */
-    public function search($query = null, $next_url = null, $queryAll=false)
+    public function search($query = null, $next_url = null, $queryAll=false,$loadAll=true)
     {
         if ( ! empty($next_url)) {
             $url = $this->baseUrl . '/' . $next_url;
@@ -129,17 +131,23 @@ class Client
         $response = $this->makeRequest('get', $url, ['headers' => ['Authorization' => $this->getAuthHeader()]]);
         $data     = json_decode($response->getBody(), true);
 
-        $results = $data['records'];
-        if ( ! $data['done']) {
-            $more_results = $this->search(null, substr($data['nextRecordsUrl'], 1));
-            if ( ! empty($more_results)) {
-                $results = array_merge($results, $more_results);
+        if($loadAll)
+        {
+            $results = $data['records'];
+            if ( ! $data['done']) {
+                $more_results = $this->search(null, substr($data['nextRecordsUrl'], 1));
+                if ( ! empty($more_results)) {
+                    $results = array_merge($results, $more_results);
+                }
             }
+            return $results;
+        }
+        else
+        {
+            return $data;
         }
 
-        return $results;
     }
-
 
     /**
      * Make an update request
@@ -294,8 +302,8 @@ class Client
         } catch (GuzzleRequestException $e) {
 
             if ($e->getResponse() === null) {
-        		throw $e;
-        	}
+                throw $e;
+            }
 
             //If its an auth error convert to an auth exception
             if ($e->getResponse()->getStatusCode() == 401) {
@@ -314,8 +322,8 @@ class Client
     private function getAuthHeader()
     {
         if ($this->accessToken === null) {
-    		throw new AuthenticationException(0, "Access token not set");
-    	}
+            throw new AuthenticationException(0, "Access token not set");
+        }
 
         return 'Bearer ' . $this->accessToken->getAccessToken();
     }
