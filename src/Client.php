@@ -144,6 +144,13 @@ class Client
         }
         else
         {
+            if(empty($data['totalSize']) && empty($data['records']))
+            {
+                $data = [
+                    'totalSize' => count($data),
+                    'records'   => $data
+                ];
+            }
             return $data;
         }
 
