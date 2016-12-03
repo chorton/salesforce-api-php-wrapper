@@ -119,12 +119,12 @@ class Client
      * @return array
      * @throws \Exception
      */
-    public function search($query = null, $next_url = null)
+    public function search($query = null, $next_url = null, $queryAll=false)
     {
         if ( ! empty($next_url)) {
             $url = $this->baseUrl . '/' . $next_url;
         } else {
-            $url = $this->generateUrl('query/?q=' . urlencode($query));
+            $url = $this->generateUrl(($queryAll ? 'queryAll' : 'query').'/?q=' . urlencode($query));
         }
         $response = $this->makeRequest('get', $url, ['headers' => ['Authorization' => $this->getAuthHeader()]]);
         $data     = json_decode($response->getBody(), true);
