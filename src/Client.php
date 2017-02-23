@@ -128,7 +128,7 @@ class Client
         } else {
             $url = $this->generateUrl(($queryAll ? 'queryAll' : 'query').'/?q=' . urlencode($query));
         }
-        $response = $this->makeRequest('get', $url, ['headers' => ['Authorization' => $this->getAuthHeader()]]);
+        $response = $this->makeRequest('get', $url, ['timeout' => 3600.0,'headers' => ['Authorization' => $this->getAuthHeader()]]);
         $data     = json_decode($response->getBody(), true);
 
         if($loadAll)
