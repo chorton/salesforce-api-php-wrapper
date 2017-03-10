@@ -128,7 +128,7 @@ class Client
         } else {
             $url = $this->generateUrl(($queryAll ? 'queryAll' : 'query').'/?q=' . urlencode($query));
         }
-        $response = $this->makeRequest('get', $url, ['timeout' => 3600.0,'headers' => ['Authorization' => $this->getAuthHeader()]]);
+        $response = $this->makeRequest('get', $url, ['timeout' => 3600.0,'headers' => ['Authorization' => $this->getAuthHeader(), 'Sforce-Query-Options' => 'batchSize=2000']]);
         $data     = json_decode($response->getBody(), true);
 
         if($loadAll)
