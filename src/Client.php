@@ -171,6 +171,27 @@ class Client
     }
 
     /**
+     * Make an update request
+     *
+     * @param string $object The object type to update
+     * @param string $id The ID of the record to update
+     * @param array  $data The data to put into the record
+     * @return bool
+     * @throws \Exception
+     */
+    public function upsertRecord($object, $externalIdField, $id, array $data)
+    {
+        $url =  $this->generateUrl('sobjects/'. $object . '/' . $externalIdField . '/' . $id);
+
+        $this->makeRequest('patch', $url, [
+            'headers' => ['Content-Type' => 'application/json', 'Authorization' => $this->getAuthHeader()],
+            'body'    => json_encode($data)
+        ]);
+
+        return true;
+    }
+
+    /**
      * Create a new object in salesforce
      *
      * @param string $object
