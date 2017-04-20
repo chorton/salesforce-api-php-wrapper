@@ -183,12 +183,22 @@ class Client
     {
         $url =  $this->generateUrl('sobjects/'. $object . '/' . $externalIdField . '/' . $id);
 
-        $this->makeRequest('patch', $url, [
+        $response = $this->makeRequest('patch', $url, [
             'headers' => ['Content-Type' => 'application/json', 'Authorization' => $this->getAuthHeader()],
             'body'    => json_encode($data)
         ]);
+        $responseBody = json_decode($response->getBody(), true);
 
-        return true;
+        if($response->getStatusCode() == 201) {
+            $responseBody['created'] = true;
+            $responseBody['updated'] = false;
+        }
+        else {
+            $responseBody['created'] = false;
+            $responseBody['updated'] = true;
+        }
+
+        return $responseBody;
     }
 
     /**
