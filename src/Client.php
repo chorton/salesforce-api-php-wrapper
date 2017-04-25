@@ -192,10 +192,15 @@ class Client
         if($response->getStatusCode() == 201) {
             $responseBody['created'] = true;
             $responseBody['updated'] = false;
+            $responsebody['success'] = true;
         }
-        else {
+        elseif($response->getStatusCode() == 200) {
             $responseBody['created'] = false;
             $responseBody['updated'] = true;
+            $responseBody['success'] = true;
+        }
+        else {
+            $responseBody['success'] = false;
         }
 
         return $responseBody;
