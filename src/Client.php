@@ -199,6 +199,11 @@ class Client
             $responseBody['updated'] = true;
             $responseBody['success'] = true;
         }
+        elseif($response->getStatusCode() == 204) {
+            $responseBody['created'] = false;
+            $responseBody['updated'] = false;
+            $responseBody['success'] = true;
+        }
         else {
             $responseBody['success'] = false;
         }
