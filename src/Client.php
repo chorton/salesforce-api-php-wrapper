@@ -336,6 +336,14 @@ class Client
      */
     private function makeRequest($method, $url, $data)
     {
+
+        if ($this->accessToken->needsRefresh()) {
+
+            $this->accessToken = $this->refreshToken();
+
+            $this->setAccessToken($this->accessToken);
+        }
+
         try {
             $response = $this->guzzleClient->$method($url, $data);
 
