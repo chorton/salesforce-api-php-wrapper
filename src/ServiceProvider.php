@@ -16,6 +16,16 @@ class ServiceProvider extends BaseServiceProvider
      */
     public function boot()
     {
+        $salesforceConfig = config('salesforce');
+
+        $this->app->bind(SalesforceClient::class, function ($app) use($salesforceConfig) {
+
+            $sfClient = SalesforceClient::create($salesforceConfig['api_base_url'], $salesforceConfig['client_id'], $salesforceConfig['client_secret'], $salesforceConfig['api_version']);
+
+            $sfClient->login($salesforceConfig['username'], $salesforceConfig['password'].$salesforceConfig['token']);
+
+            return $sfClient;
+        });
     }
 
     /**
@@ -25,14 +35,5 @@ class ServiceProvider extends BaseServiceProvider
      */
     public function register()
     {
-        $salesforceConfig = config('salesforce');
-
-        $sfClient = SalesforceClient::create($salesforceConfig['api_base_url'], $salesforceConfig['client_id'], $salesforceConfig['client_secret'], $salesforceConfig['api_version']);
-        $sfClient->login($salesforceConfig['username'], $salesforceConfig['password'].$salesforceConfig['token']);
-
-        $this->app->singleton(SalesforceClient::class, function ($app) use ($sfClient) {
-            return $sfClient;
-        });
-
     }
 }
