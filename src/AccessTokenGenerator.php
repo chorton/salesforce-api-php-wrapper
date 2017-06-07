@@ -53,12 +53,12 @@ class AccessTokenGenerator {
      * @param array $salesforceToken
      * @return AccessToken
      */
-    public function createFromSalesforceResponse(array $salesforceToken)
+    public function createFromSalesforceResponse(array $salesforceToken, $expiresInHours=1)
     {
 
         $dateIssued = Carbon::createFromTimestamp((int)($salesforceToken['issued_at'] / 1000));
 
-        $dateExpires = $dateIssued->copy()->addHour()->subMinutes(5);
+        $dateExpires = $dateIssued->copy()->addHours($expiresInHours)->subMinutes(5);
 
         $id = $this->getKeyIfSet($salesforceToken, 'id');
 

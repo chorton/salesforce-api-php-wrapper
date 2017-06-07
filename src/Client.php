@@ -67,7 +67,7 @@ class Client
      *
      * @throws \Exception
      */
-    public function login($user, $password)
+    public function login($user, $password, $expiresInHours=1)
     {
         $res = $this->guzzleClient->post($this->clientConfig->getLoginUrl() . 'services/oauth2/token', [
             'headers'     => ['Accept' => 'application/json'],
@@ -84,8 +84,10 @@ class Client
         }
         $tokeGenerator = new AccessTokenGenerator();
 
-        $decodedJson = json_decode((string)$res->getBody(), true);
-        $this->setAccessToken($tokeGenerator->createFromSalesforceResponse($decodedJson));
+        $token = $res->getbody();
+        $decodedJson = json_decode((string)$token, true);
+        $this->setAccessToken($tokeGenerator->createFromSalesforceResponse($decodedJson, $expiresInHours));
+        return $this->accessToken;
     }
 
 

@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Response;
 
 use Crunch\Salesforce\Client as SalesforceClient;
 
+use Exception;
+
 class ServiceProvider extends BaseServiceProvider
 {
     /**
@@ -18,14 +20,26 @@ class ServiceProvider extends BaseServiceProvider
     {
         $salesforceConfig = config('salesforce');
 
-        $this->app->bind(SalesforceClient::class, function ($app) use($salesforceConfig) {
+        $sfClient = SalesforceClient::create($salesforceConfig['api_base_url'], $salesforceConfig['client_id'], $salesforceConfig['client_secret'], $salesforceConfig['api_version']);
 
-            $sfClient = SalesforceClient::create($salesforceConfig['api_base_url'], $salesforceConfig['client_id'], $salesforceConfig['client_secret'], $salesforceConfig['api_version']);
+        $tokenStore = new \Crunch\Salesforce\TokenStore\LocalFile(new \Crunch\Salesforce\AccessTokenGenerator, new \Crunch\Salesforce\TokenStore\LocalFileStoreConfig());
 
-            $sfClient->login($salesforceConfig['username'], $salesforceConfig['password'].$salesforceConfig['token']);
+        try {
+            $accessToken = $tokenStore->fetchAccessToken();
+            if ($accessToken->needsRefresh()) {
+                $accessToken = $sfClient->login($salesforceConfig['username'], $salesforceConfig['password'].$salesforceConfig['token'], $salesforceConfig['token_expiry_hours']);
+                $tokenStore->saveAccessToken($accessToken);
+            }
+        } catch(Exception $e) {
+            $accessToken = $sfClient->login($salesforceConfig['username'], $salesforceConfig['password'].$salesforceConfig['token'], $salesforceConfig['token_expiry_hours']);
 
+            $tokenStore->saveAccessToken($accessToken);
+        }
+
+        $this->app->singleton('SalesforceAPIClient', function ($app) use ($sfClient) {
             return $sfClient;
         });
+
     }
 
     /**
