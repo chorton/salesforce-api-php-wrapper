@@ -100,13 +100,13 @@ class Client
      *
      * @return string
      */
-    public function getRecord($objectType, $sfId, array $fields = [])
+    public function getRecord($objectType, $getByFieldName=null, $sfId, array $fields = [])
     {
         $fieldsQuery = '';
         if (!empty($fields)) {
             $fieldsQuery = '?fields=' . implode(',', $fields);
         }
-        $url      = $this->generateUrl('sobjects/'. $objectType . '/' . $sfId . $fieldsQuery);
+        $url      = $this->generateUrl('sobjects/'. $objectType . '/' . (!is_null($getByFieldName) ? $getByFieldName.'/' : '') . $sfId . $fieldsQuery);
         $response = $this->makeRequest('get', $url, ['headers' => ['Authorization' => $this->getAuthHeader()]]);
 
         return json_decode($response->getBody(), true);
