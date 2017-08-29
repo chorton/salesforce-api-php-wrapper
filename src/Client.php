@@ -90,6 +90,18 @@ class Client
         return $this->accessToken;
     }
 
+    /**
+     * Get the Salesforce Organization Limits and current usage
+     * @return array
+     */
+    public function getOrganizationLimits()
+    {
+        $url = $this->generateUrl('limits');
+
+        $response = $this->makeRequest('get', $url, ['headers' => ['Authorization' => $this->getAuthHeader()]]);
+
+        return json_decode($response->getBody(), true);
+    }
 
     /**
      * Fetch a specific object
