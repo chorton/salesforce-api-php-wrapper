@@ -2,7 +2,7 @@
   "name": "chorton/salesforce-api-php-wrapper",
   "description": "A library for interacting with the Salesforce REST API and managing the OAuth flow.  Forked from https://github.com/crunch-accounting/salesforce-api-php-wrapper",
   "keywords": ["salesforce", "rest", "api", "oauth2"],
-  "homepage": "chorton/salesforce-api-php-wrapper",
+  "homepage": "https://github.com/chorton/salesforce-api-php-wrapper",
   "license": "MIT",
   "authors": [
     {
