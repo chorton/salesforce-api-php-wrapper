@@ -12,7 +12,7 @@
     {
       "name": "Chad Horton",
       "email": "chad.horton@gmail.com"
-    },
+    }
   ],
   "require": {
     "php": ">=5.5",
