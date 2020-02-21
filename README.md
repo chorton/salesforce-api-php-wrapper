@@ -10,7 +10,7 @@ A simple library for interacting with the Salesforce REST API.
 Methods for setting up a connection, requesting an access token, refreshing the access token, saving the access token, and making calls against the API.
 
 
-##Getting started
+##Getting started!
 
 __Installation:__
 The package should be installed through composer and locked to a major version
